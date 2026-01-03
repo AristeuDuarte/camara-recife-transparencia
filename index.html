@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Câmara Municipal do Recife 2025</title>
+    
+    <!-- SEO e Descrição -->
+    <meta name="description" content="Dashboard interativo de análise de gastos com pessoal da Câmara Municipal do Recife. Consulte salários, gabinetes e servidores.">
+    <meta name="keywords" content="Câmara Recife, vereadores, salários, transparência, gastos públicos, servidores">
+    <meta name="author" content="Aristeu Duarte">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook / WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://aristeuduarte.github.io/camara-recife-transparencia/">
+    <meta property="og:title" content="📊 Dashboard Câmara do Recife 2025">
+    <meta property="og:description" content="Análise completa de gastos com pessoal: salários de vereadores, servidores e gabinetes. Dados de transparência pública.">
+    <meta property="og:image" content="https://aristeuduarte.github.io/camara-recife-transparencia/preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Dashboard Câmara Recife">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://aristeuduarte.github.io/camara-recife-transparencia/">
+    <meta name="twitter:title" content="📊 Dashboard Câmara do Recife 2025">
+    <meta name="twitter:description" content="Análise completa de gastos com pessoal: salários de vereadores, servidores e gabinetes.">
+    <meta name="twitter:image" content="https://aristeuduarte.github.io/camara-recife-transparencia/preview.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+    
+    <!-- PWA / Mobile App -->
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Câmara Recife">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #e4e4e7;
+        }
+        
+        .header {
+            background: linear-gradient(90deg, #0f3460 0%, #1a1a2e 100%);
+            padding: 20px 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .header-logo {
+            font-size: 2.5rem;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            color: #00d9ff;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+        }
+        
+        .header-badges {
+            margin-left: auto;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .header-badge {
+            background: linear-gradient(90deg, #22c55e, #16a34a);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .header-badge.gsheets {
+            background: linear-gradient(90deg, #4285f4, #34a853);
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 26, 46, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-overlay.hidden {
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #334155;
+            border-top-color: #00d9ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            margin-top: 20px;
+            color: #00d9ff;
+            font-size: 1.1rem;
+        }
+        
+        .loading-sub {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        /* Error State */
+        .error-message {
+            background: linear-gradient(145deg, #7f1d1d 0%, #450a0a 100%);
+            border: 2px solid #ef4444;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px;
+            text-align: center;
+        }
+        
+        .error-message h2 {
+            color: #ef4444;
+            margin-bottom: 10px;
+        }
+        
+        .error-message p {
+            color: #fca5a5;
+        }
+        
+        .error-message button {
+            margin-top: 15px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        /* Data Source Info */
+        .data-source-info {
+            background: linear-gradient(145deg, #1e3a5f 0%, #0f2744 100%);
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .data-source-info .icon {
+            font-size: 1.5rem;
+        }
+        
+        .data-source-info .info {
+            flex: 1;
+        }
+        
+        .data-source-info .label {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+        
+        .data-source-info .value {
+            color: #e4e4e7;
+            font-size: 0.9rem;
+        }
+        
+        .data-source-info .refresh-btn {
+            background: #334155;
+            color: #e4e4e7;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+        
+        .data-source-info .refresh-btn:hover {
+            background: #475569;
+        }
+        
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .kpi-card {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.1);
+        }
+        
+        .kpi-card .label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .kpi-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00d9ff;
+        }
+        
+        .kpi-card .sub {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        
+        /* Filters */
+        .filters-section {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+        
+        .filters-title {
+            font-size: 1rem;
+            color: #00d9ff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .filter-group label {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+        
+        .filter-group select, .filter-group input {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #e4e4e7;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        
+        .filter-group select:hover, .filter-group input:hover {
+            border-color: #00d9ff;
+        }
+        
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: #00d9ff;
+            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(90deg, #00d9ff 0%, #0891b2 100%);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #334155;
+            color: #e4e4e7;
+        }
+        
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+        }
+        
+        .chart-card h3 {
+            font-size: 1rem;
+            color: #e4e4e7;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        /* Table */
+        .table-section {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #334155;
+            margin-bottom: 25px;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .table-header h3 {
+            color: #e4e4e7;
+            font-size: 1rem;
+        }
+        
+        .table-info {
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        th {
+            background: #0f172a;
+            color: #00d9ff;
+            padding: 12px 10px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        
+        th:hover {
+            background: #1a1a2e;
+        }
+        
+        th.sorted-asc::after { content: ' ▲'; }
+        th.sorted-desc::after { content: ' ▼'; }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #334155;
+            white-space: nowrap;
+        }
+        
+        tr:hover td {
+            background: rgba(0, 217, 255, 0.05);
+        }
+        
+        tr.highlighted td {
+            background: rgba(0, 217, 255, 0.15);
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        .highlight {
+            color: #22c55e;
+            font-weight: 600;
+        }
+        
+        /* Servidor Card */
+        .servidor-card {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 2px solid #22c55e;
+            display: none;
+        }
+        
+        .servidor-card.show {
+            display: block;
+        }
+        
+        .servidor-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .servidor-card-header h2 {
+            color: #22c55e;
+            font-size: 1.4rem;
+        }
+        
+        .servidor-card-header .close-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .servidor-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .servidor-info-item {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .servidor-info-item .label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+        
+        .servidor-info-item .value {
+            color: #e4e4e7;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .servidor-info-item .value.money {
+            color: #00d9ff;
+        }
+        
+        .servidor-historico h3 {
+            color: #e4e4e7;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            background: #334155;
+            color: #94a3b8;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .tab:hover {
+            background: #475569;
+        }
+        
+        .tab.active {
+            background: linear-gradient(90deg, #00d9ff 0%, #0891b2 100%);
+            color: #0f172a;
+            font-weight: 600;
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .pagination button {
+            background: #334155;
+            color: #e4e4e7;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .pagination button:hover:not(:disabled) {
+            background: #475569;
+        }
+        
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination span {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        /* Export buttons */
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-export {
+            background: #334155;
+            color: #e4e4e7;
+            font-size: 0.85rem;
+            padding: 8px 15px;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid #334155;
+        }
+        
+        .footer p {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        .footer a {
+            color: #00d9ff;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.4rem; }
+            .header-logo { font-size: 2rem; }
+            .kpi-card .value { font-size: 1.2rem; }
+            .container { padding: 10px; }
+            .header-badges { margin-left: 0; margin-top: 10px; }
+        }
+        
+        /* Print styles */
+        @media print {
+            body { background: white; color: black; }
+            .header { position: relative; }
+            .filters-section, .tabs, .pagination, .data-source-info { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Carregando dados...</div>
+        <div class="loading-sub">Conectando ao Google Sheets</div>
+    </div>
+    
+    <div class="header">
+        <div class="header-content">
+            <span class="header-logo">🏛️</span>
+            <div>
+                <h1>Dashboard - Câmara Municipal do Recife</h1>
+                <p>Análise de Gastos com Pessoal - Janeiro a Dezembro de 2025</p>
+            </div>
+            <div class="header-badges">
+                <span class="header-badge">✓ Dados Públicos</span>
+                <span class="header-badge gsheets">📊 Google Sheets</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Data Source Info -->
+        <div class="data-source-info">
+            <span class="icon">📡</span>
+            <div class="info">
+                <div class="label">Fonte de Dados</div>
+                <div class="value">Google Sheets - Atualização em tempo real</div>
+            </div>
+            <div class="info">
+                <div class="label">Última Atualização</div>
+                <div class="value" id="lastUpdate">-</div>
+            </div>
+            <button class="refresh-btn" onclick="reloadData()">🔄 Atualizar Dados</button>
+        </div>
+        
+        <!-- Card do Servidor Selecionado -->
+        <div class="servidor-card" id="servidorCard">
+            <div class="servidor-card-header">
+                <h2 id="servidorNome">Nome do Servidor</h2>
+                <button class="close-btn" onclick="fecharServidorCard()">✕ Fechar</button>
+            </div>
+            <div class="servidor-info-grid" id="servidorInfo"></div>
+            <div class="servidor-historico">
+                <h3>📅 Histórico Mensal de Remuneração</h3>
+                <div class="table-wrapper" style="max-height: 300px;">
+                    <table id="tableServidorHistorico">
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th>Categoria</th>
+                                <th>Lotação</th>
+                                <th class="text-right">Bruto</th>
+                                <th class="text-right">Líquido</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- KPIs -->
+        <div class="kpi-grid" id="kpiGrid">
+            <div class="kpi-card">
+                <div class="label">Total Anual (Bruto)</div>
+                <div class="value" id="kpiTotal">-</div>
+                <div class="sub">Folha de pagamento completa</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Servidores Ativos</div>
+                <div class="value" id="kpiServidores">-</div>
+                <div class="sub">Matrículas únicas</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Média por Servidor</div>
+                <div class="value" id="kpiMedia">-</div>
+                <div class="sub">Remuneração anual média</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Gabinetes</div>
+                <div class="value" id="kpiGabinetes">-</div>
+                <div class="sub">Parlamentares analisados</div>
+            </div>
+            <div class="kpi-card">
+                <div class="label">Maior Salário</div>
+                <div class="value" id="kpiMaior">-</div>
+                <div class="sub" id="kpiMaiorNome">-</div>
+            </div>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="filters-title">🔍 Filtros e Busca</div>
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label>Mês</label>
+                    <select id="filterMes" onchange="aplicarFiltros()">
+                        <option value="">Todos os meses</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Categoria</label>
+                    <select id="filterCategoria" onchange="aplicarFiltros()">
+                        <option value="">Todas as categorias</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Gabinete</label>
+                    <select id="filterGabinete" onchange="aplicarFiltros()">
+                        <option value="">Todos os gabinetes</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Salário Mínimo</label>
+                    <input type="number" id="filterSalarioMin" placeholder="0" onchange="aplicarFiltros()">
+                </div>
+                <div class="filter-group">
+                    <label>Salário Máximo</label>
+                    <input type="number" id="filterSalarioMax" placeholder="999999" onchange="aplicarFiltros()">
+                </div>
+                <div class="filter-group" style="grid-column: span 2;">
+                    <label>🔍 Buscar por Nome</label>
+                    <input type="text" id="filterNome" placeholder="Digite o nome do servidor..." oninput="aplicarFiltros()">
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-secondary" onclick="limparFiltros()">Limpar Filtros</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('visaoGeral')">📈 Visão Geral</button>
+            <button class="tab" onclick="showTab('gabinetes')">🏛️ Gabinetes</button>
+            <button class="tab" onclick="showTab('servidores')">👥 Servidores</button>
+            <button class="tab" onclick="showTab('ranking')">🏆 Rankings</button>
+        </div>
+        
+        <!-- Tab: Visão Geral -->
+        <div id="tabVisaoGeral" class="tab-content">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>📅 Evolução Mensal dos Gastos</h3>
+                    <div class="chart-container">
+                        <canvas id="chartMensal"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>📊 Distribuição por Categoria</h3>
+                    <div class="chart-container">
+                        <canvas id="chartCategoria"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>💰 Top 10 Gabinetes por Gasto</h3>
+                    <div class="chart-container">
+                        <canvas id="chartGabinetes"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>📈 Distribuição Salarial</h3>
+                    <div class="chart-container">
+                        <canvas id="chartSalarios"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Gabinetes -->
+        <div id="tabGabinetes" class="tab-content" style="display: none;">
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>🏛️ Ranking de Gabinetes Parlamentares</h3>
+                    <div class="export-buttons">
+                        <button class="btn btn-export" onclick="exportCSV('gabinetes')">📥 Exportar CSV</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="tableGabinetes">
+                        <thead>
+                            <tr>
+                                <th onclick="sortTable('gabinetes', 0)">#</th>
+                                <th onclick="sortTable('gabinetes', 1)">Gabinete</th>
+                                <th onclick="sortTable('gabinetes', 2)" class="text-right">Gasto Anual</th>
+                                <th onclick="sortTable('gabinetes', 3)" class="text-right">Servidores</th>
+                                <th onclick="sortTable('gabinetes', 4)" class="text-right">Custo/Servidor</th>
+                                <th onclick="sortTable('gabinetes', 5)" class="text-right">Média Mensal</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Servidores -->
+        <div id="tabServidores" class="tab-content" style="display: none;">
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>👥 Lista de Servidores</h3>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <span class="table-info" id="tableInfo">Mostrando 0 de 0</span>
+                        <div class="export-buttons">
+                            <button class="btn btn-export" onclick="exportCSV('servidores')">📥 Exportar CSV</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table id="tableServidores">
+                        <thead>
+                            <tr>
+                                <th onclick="sortServidores(0)">Nome</th>
+                                <th onclick="sortServidores(1)">Categoria</th>
+                                <th onclick="sortServidores(2)">Lotação</th>
+                                <th onclick="sortServidores(3)">Mês</th>
+                                <th onclick="sortServidores(4)" class="text-right">Bruto</th>
+                                <th onclick="sortServidores(5)" class="text-right">Líquido</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <div class="pagination">
+                    <button onclick="prevPage()" id="btnPrev">← Anterior</button>
+                    <span id="pageInfo">Página 1 de 1</span>
+                    <button onclick="nextPage()" id="btnNext">Próximo →</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Rankings -->
+        <div id="tabRanking" class="tab-content" style="display: none;">
+            <div class="charts-grid">
+                <div class="table-section">
+                    <h3 style="margin-bottom: 15px;">🏆 Top 20 Maiores Salários</h3>
+                    <div class="table-wrapper" style="max-height: 400px;">
+                        <table id="tableTopSalarios">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Nome</th>
+                                    <th>Categoria</th>
+                                    <th>Lotação</th>
+                                    <th class="text-right">Bruto</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="table-section">
+                    <h3 style="margin-bottom: 15px;">📊 Estatísticas por Categoria</h3>
+                    <div class="table-wrapper">
+                        <table id="tableEstatisticas">
+                            <thead>
+                                <tr>
+                                    <th>Categoria</th>
+                                    <th class="text-right">Servidores</th>
+                                    <th class="text-right">Total Anual</th>
+                                    <th class="text-right">Média</th>
+                                    <th class="text-right">% do Total</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        <p>📊 Dashboard de Transparência Pública | Dados da Câmara Municipal do Recife - 2025</p>
+        <p style="margin-top: 10px;">Dados carregados via Google Sheets | <a href="#" id="sheetLink" target="_blank">Acessar Planilha</a></p>
+    </div>
+    
+    <script>
+        // ==========================================
+        // CONFIGURAÇÃO - ALTERE A URL AQUI
+        // ==========================================
+        const GOOGLE_SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTpMvVNqUlweOAtA30hkSGAIVP6eAHekN33cubpEKXXok5oDYajwxfyx5ZG06C5VnrghdQLJ_mcimHv/pub?gid=357192540&single=true&output=csv';
+        // Exemplo: https://docs.google.com/spreadsheets/d/e/2PACX-XXXXX/pub?output=csv
+        // ==========================================
+        
+        // Ordem dos meses
+        const MESES_ORDEM = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        
+        // Dados
+        let DATA = null;
+        let filteredData = [];
+        let currentPage = 1;
+        const pageSize = 50;
+        let sortColumn = -1;
+        let sortAsc = true;
+        
+        // Carregar dados do Google Sheets
+        async function loadData() {
+            const overlay = document.getElementById('loadingOverlay');
+            
+            try {
+                if (GOOGLE_SHEETS_CSV_URL === 'COLE_SUA_URL_AQUI') {
+                    throw new Error('URL do Google Sheets não configurada');
+                }
+                
+                const response = await fetch(GOOGLE_SHEETS_CSV_URL);
+                if (!response.ok) throw new Error('Erro ao carregar dados');
+                
+                const csvText = await response.text();
+                const servidores = parseCSV(csvText);
+                
+                // Processar dados
+                DATA = processData(servidores);
+                
+                // Atualizar timestamp
+                document.getElementById('lastUpdate').textContent = new Date().toLocaleString('pt-BR');
+                
+                // Configurar link da planilha
+                const sheetId = GOOGLE_SHEETS_CSV_URL.match(/\/d\/e\/([^\/]+)/)?.[1] || '';
+                if (sheetId) {
+                    document.getElementById('sheetLink').href = `https://docs.google.com/spreadsheets/d/e/${sheetId}/pubhtml`;
+                }
+                
+                initDashboard();
+                overlay.classList.add('hidden');
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                overlay.innerHTML = `
+                    <div class="error-message">
+                        <h2>⚠️ Erro ao Carregar Dados</h2>
+                        <p>${error.message}</p>
+                        <p style="margin-top: 10px; font-size: 0.85rem;">
+                            Verifique se a URL do Google Sheets está configurada corretamente no código.
+                        </p>
+                        <button onclick="location.reload()">Tentar Novamente</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Parser CSV
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            
+            const servidores = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length >= 9) {
+                    servidores.push({
+                        matricula: values[0]?.trim() || '',
+                        nome: values[1]?.trim() || '',
+                        categoria: values[2]?.trim() || '',
+                        cargo: values[3]?.trim() || '',
+                        funcao: values[4]?.trim() || '',
+                        bruto: parseFloat(values[5]?.replace(',', '.')) || 0,
+                        liquido: parseFloat(values[6]?.replace(',', '.')) || 0,
+                        lotacao: values[7]?.trim() || '',
+                        mes: values[8]?.trim() || ''
+                    });
+                }
+            }
+            
+            return servidores;
+        }
+        
+        // Parser de linha CSV (lida com aspas)
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            
+            return result;
+        }
+        
+        // Processar dados
+        function processData(servidores) {
+            // Identificar gabinetes
+            servidores.forEach(s => {
+                s.gabinete = s.lotacao.startsWith('VER.') ? s.lotacao : '';
+                s.eGabinete = s.lotacao.startsWith('VER.');
+            });
+            
+            // Extrair filtros únicos
+            const meses = [...new Set(servidores.map(s => s.mes))].sort((a, b) => 
+                MESES_ORDEM.indexOf(a) - MESES_ORDEM.indexOf(b)
+            );
+            const categorias = [...new Set(servidores.map(s => s.categoria))].sort();
+            const gabinetes = [...new Set(servidores.filter(s => s.eGabinete).map(s => s.gabinete))].sort();
+            
+            return {
+                servidores,
+                filtros: { meses, categorias, gabinetes }
+            };
+        }
+        
+        function reloadData() {
+            document.getElementById('loadingOverlay').classList.remove('hidden');
+            loadData();
+        }
+        
+        function initDashboard() {
+            populateFilters();
+            aplicarFiltros();
+        }
+        
+        function populateFilters() {
+            const filterMes = document.getElementById('filterMes');
+            filterMes.innerHTML = '<option value="">Todos os meses</option>';
+            DATA.filtros.meses.forEach(mes => {
+                filterMes.innerHTML += `<option value="${mes}">${mes}</option>`;
+            });
+            
+            const filterCategoria = document.getElementById('filterCategoria');
+            filterCategoria.innerHTML = '<option value="">Todas as categorias</option>';
+            DATA.filtros.categorias.forEach(cat => {
+                filterCategoria.innerHTML += `<option value="${cat}">${cat}</option>`;
+            });
+            
+            const filterGabinete = document.getElementById('filterGabinete');
+            filterGabinete.innerHTML = '<option value="">Todos os gabinetes</option>';
+            DATA.filtros.gabinetes.forEach(gab => {
+                filterGabinete.innerHTML += `<option value="${gab}">${gab}</option>`;
+            });
+        }
+        
+        function aplicarFiltros() {
+            const mes = document.getElementById('filterMes').value;
+            const categoria = document.getElementById('filterCategoria').value;
+            const gabinete = document.getElementById('filterGabinete').value;
+            const salarioMin = parseFloat(document.getElementById('filterSalarioMin').value) || 0;
+            const salarioMax = parseFloat(document.getElementById('filterSalarioMax').value) || Infinity;
+            const nomeBusca = document.getElementById('filterNome').value.toLowerCase().trim();
+            
+            filteredData = DATA.servidores.filter(s => {
+                if (mes && s.mes !== mes) return false;
+                if (categoria && s.categoria !== categoria) return false;
+                if (gabinete && s.gabinete !== gabinete) return false;
+                if (nomeBusca && !s.nome.toLowerCase().includes(nomeBusca)) return false;
+                if (s.bruto < salarioMin || s.bruto > salarioMax) return false;
+                return true;
+            });
+            
+            currentPage = 1;
+            updateKPIs();
+            updateCharts();
+            updateTables();
+        }
+        
+        function limparFiltros() {
+            document.getElementById('filterMes').value = '';
+            document.getElementById('filterCategoria').value = '';
+            document.getElementById('filterGabinete').value = '';
+            document.getElementById('filterSalarioMin').value = '';
+            document.getElementById('filterSalarioMax').value = '';
+            document.getElementById('filterNome').value = '';
+            aplicarFiltros();
+        }
+        
+        function formatReal(valor) {
+            return 'R$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        
+        function formatCompact(valor) {
+            if (valor >= 1000000) return 'R$ ' + (valor / 1000000).toFixed(1) + ' mi';
+            if (valor >= 1000) return 'R$ ' + (valor / 1000).toFixed(0) + ' mil';
+            return formatReal(valor);
+        }
+        
+        function updateKPIs() {
+            const total = filteredData.reduce((sum, s) => sum + s.bruto, 0);
+            const matriculas = new Set(filteredData.map(s => s.matricula));
+            const servidores = matriculas.size;
+            const media = servidores > 0 ? total / servidores : 0;
+            const gabinetes = new Set(filteredData.filter(s => s.eGabinete).map(s => s.gabinete)).size;
+            
+            const maior = filteredData.reduce((max, s) => s.bruto > max.bruto ? s : max, { bruto: 0, nome: '-' });
+            
+            document.getElementById('kpiTotal').textContent = formatCompact(total);
+            document.getElementById('kpiServidores').textContent = servidores.toLocaleString();
+            document.getElementById('kpiMedia').textContent = formatCompact(media);
+            document.getElementById('kpiGabinetes').textContent = gabinetes;
+            document.getElementById('kpiMaior').textContent = formatReal(maior.bruto);
+            document.getElementById('kpiMaiorNome').textContent = maior.nome.substring(0, 25);
+        }
+        
+        // Charts
+        let chartMensal, chartCategoria, chartGabinetes, chartSalarios;
+        
+        function updateCharts() {
+            updateChartMensal();
+            updateChartCategoria();
+            updateChartGabinetes();
+            updateChartSalarios();
+        }
+        
+        function updateChartMensal() {
+            const ctx = document.getElementById('chartMensal').getContext('2d');
+            
+            const meses = DATA.filtros.meses;
+            const valores = meses.map(mes => {
+                return filteredData.filter(s => s.mes === mes).reduce((sum, s) => sum + s.bruto, 0);
+            });
+            
+            if (chartMensal) chartMensal.destroy();
+            
+            chartMensal = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: meses.map(m => m.substring(0, 3)),
+                    datasets: [{
+                        label: 'Gasto Mensal',
+                        data: valores,
+                        borderColor: '#00d9ff',
+                        backgroundColor: 'rgba(0, 217, 255, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#00d9ff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => formatReal(ctx.raw)
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: (v) => formatCompact(v)
+                            },
+                            grid: { color: '#334155' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChartCategoria() {
+            const ctx = document.getElementById('chartCategoria').getContext('2d');
+            
+            const categorias = {};
+            filteredData.forEach(s => {
+                categorias[s.categoria] = (categorias[s.categoria] || 0) + s.bruto;
+            });
+            
+            const labels = Object.keys(categorias);
+            const valores = Object.values(categorias);
+            const colors = ['#00d9ff', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
+            
+            if (chartCategoria) chartCategoria.destroy();
+            
+            chartCategoria = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: valores,
+                        backgroundColor: colors.slice(0, labels.length),
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: '#e4e4e7', font: { size: 11 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.label}: ${formatReal(ctx.raw)}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChartGabinetes() {
+            const ctx = document.getElementById('chartGabinetes').getContext('2d');
+            
+            const gabinetes = {};
+            filteredData.filter(s => s.eGabinete && s.categoria !== 'VEREADORES').forEach(s => {
+                gabinetes[s.gabinete] = (gabinetes[s.gabinete] || 0) + s.bruto;
+            });
+            
+            const sorted = Object.entries(gabinetes).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            
+            if (chartGabinetes) chartGabinetes.destroy();
+            
+            chartGabinetes = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(([k]) => k.substring(0, 15)),
+                    datasets: [{
+                        data: sorted.map(([, v]) => v),
+                        backgroundColor: '#00d9ff',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => formatReal(ctx.raw)
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: (v) => formatCompact(v)
+                            },
+                            grid: { color: '#334155' }
+                        },
+                        y: {
+                            ticks: { color: '#94a3b8', font: { size: 10 } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChartSalarios() {
+            const ctx = document.getElementById('chartSalarios').getContext('2d');
+            
+            const faixas = [
+                { label: 'Até 2k', min: 0, max: 2000 },
+                { label: '2k-5k', min: 2000, max: 5000 },
+                { label: '5k-10k', min: 5000, max: 10000 },
+                { label: '10k-15k', min: 10000, max: 15000 },
+                { label: '15k-20k', min: 15000, max: 20000 },
+                { label: '20k-30k', min: 20000, max: 30000 },
+                { label: '30k+', min: 30000, max: Infinity }
+            ];
+            
+            const contagem = faixas.map(f => 
+                filteredData.filter(s => s.bruto >= f.min && s.bruto < f.max).length
+            );
+            
+            if (chartSalarios) chartSalarios.destroy();
+            
+            chartSalarios = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: faixas.map(f => f.label),
+                    datasets: [{
+                        data: contagem,
+                        backgroundColor: '#22c55e',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.raw} servidores`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { color: '#334155' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Tables
+        function updateTables() {
+            updateTableServidores();
+            updateTableGabinetes();
+            updateTableTopSalarios();
+            updateTableEstatisticas();
+        }
+        
+        function updateTableServidores() {
+            const tbody = document.querySelector('#tableServidores tbody');
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageData = filteredData.slice(start, end);
+            
+            tbody.innerHTML = pageData.map(s => `
+                <tr onclick="mostrarServidorCard('${s.nome.replace(/'/g, "\\'")}')">
+                    <td>${s.nome}</td>
+                    <td>${s.categoria}</td>
+                    <td>${s.lotacao}</td>
+                    <td>${s.mes}</td>
+                    <td class="text-right">${formatReal(s.bruto)}</td>
+                    <td class="text-right">${formatReal(s.liquido)}</td>
+                </tr>
+            `).join('');
+            
+            const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
+            document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+            document.getElementById('tableInfo').textContent = `Mostrando ${start + 1}-${Math.min(end, filteredData.length)} de ${filteredData.length}`;
+            document.getElementById('btnPrev').disabled = currentPage === 1;
+            document.getElementById('btnNext').disabled = currentPage >= totalPages;
+        }
+        
+        function updateTableGabinetes() {
+            const gabinetes = {};
+            
+            filteredData.filter(s => s.eGabinete).forEach(s => {
+                if (!gabinetes[s.gabinete]) {
+                    gabinetes[s.gabinete] = { total: 0, matriculas: new Set() };
+                }
+                gabinetes[s.gabinete].total += s.bruto;
+                gabinetes[s.gabinete].matriculas.add(s.matricula);
+            });
+            
+            const sorted = Object.entries(gabinetes)
+                .map(([nome, data]) => ({
+                    nome,
+                    total: data.total,
+                    servidores: data.matriculas.size,
+                    custoPorServidor: data.total / data.matriculas.size,
+                    mediaMensal: data.total / 12
+                }))
+                .sort((a, b) => b.total - a.total);
+            
+            const tbody = document.querySelector('#tableGabinetes tbody');
+            tbody.innerHTML = sorted.map((g, i) => `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${g.nome}</td>
+                    <td class="text-right">${formatReal(g.total)}</td>
+                    <td class="text-right">${g.servidores}</td>
+                    <td class="text-right">${formatReal(g.custoPorServidor)}</td>
+                    <td class="text-right">${formatReal(g.mediaMensal)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function updateTableTopSalarios() {
+            const top = [...filteredData]
+                .sort((a, b) => b.bruto - a.bruto)
+                .slice(0, 20);
+            
+            const tbody = document.querySelector('#tableTopSalarios tbody');
+            tbody.innerHTML = top.map((s, i) => `
+                <tr onclick="mostrarServidorCard('${s.nome.replace(/'/g, "\\'")}')">
+                    <td>${i + 1}</td>
+                    <td>${s.nome}</td>
+                    <td>${s.categoria}</td>
+                    <td>${s.lotacao}</td>
+                    <td class="text-right highlight">${formatReal(s.bruto)}</td>
+                </tr>
+            `).join('');
+        }
+        
+        function updateTableEstatisticas() {
+            const total = filteredData.reduce((sum, s) => sum + s.bruto, 0);
+            const categorias = {};
+            
+            filteredData.forEach(s => {
+                if (!categorias[s.categoria]) {
+                    categorias[s.categoria] = { total: 0, matriculas: new Set() };
+                }
+                categorias[s.categoria].total += s.bruto;
+                categorias[s.categoria].matriculas.add(s.matricula);
+            });
+            
+            const sorted = Object.entries(categorias)
+                .map(([nome, data]) => ({
+                    nome,
+                    total: data.total,
+                    servidores: data.matriculas.size,
+                    media: data.total / data.matriculas.size,
+                    percentual: (data.total / total * 100)
+                }))
+                .sort((a, b) => b.total - a.total);
+            
+            const tbody = document.querySelector('#tableEstatisticas tbody');
+            tbody.innerHTML = sorted.map(c => `
+                <tr>
+                    <td>${c.nome}</td>
+                    <td class="text-right">${c.servidores}</td>
+                    <td class="text-right">${formatReal(c.total)}</td>
+                    <td class="text-right">${formatReal(c.media)}</td>
+                    <td class="text-right">${c.percentual.toFixed(1)}%</td>
+                </tr>
+            `).join('');
+        }
+        
+        // Servidor Card
+        function mostrarServidorCard(nome) {
+            const registros = DATA.servidores.filter(s => s.nome.trim() === nome.trim());
+            
+            if (registros.length === 0) return;
+            
+            registros.sort((a, b) => MESES_ORDEM.indexOf(a.mes) - MESES_ORDEM.indexOf(b.mes));
+            
+            const primeiro = registros[0];
+            const totalBruto = registros.reduce((sum, r) => sum + r.bruto, 0);
+            const totalLiquido = registros.reduce((sum, r) => sum + r.liquido, 0);
+            const mediaBruto = totalBruto / registros.length;
+            
+            document.getElementById('servidorNome').textContent = nome;
+            
+            document.getElementById('servidorInfo').innerHTML = `
+                <div class="servidor-info-item">
+                    <div class="label">Categoria</div>
+                    <div class="value">${primeiro.categoria}</div>
+                </div>
+                <div class="servidor-info-item">
+                    <div class="label">Lotação</div>
+                    <div class="value">${primeiro.lotacao}</div>
+                </div>
+                <div class="servidor-info-item">
+                    <div class="label">Total Anual (Bruto)</div>
+                    <div class="value money">${formatReal(totalBruto)}</div>
+                </div>
+                <div class="servidor-info-item">
+                    <div class="label">Total Anual (Líquido)</div>
+                    <div class="value money">${formatReal(totalLiquido)}</div>
+                </div>
+                <div class="servidor-info-item">
+                    <div class="label">Média Mensal</div>
+                    <div class="value money">${formatReal(mediaBruto)}</div>
+                </div>
+                <div class="servidor-info-item">
+                    <div class="label">Meses Trabalhados</div>
+                    <div class="value">${registros.length}</div>
+                </div>
+            `;
+            
+            document.querySelector('#tableServidorHistorico tbody').innerHTML = registros.map(r => `
+                <tr>
+                    <td>${r.mes}</td>
+                    <td>${r.categoria}</td>
+                    <td>${r.lotacao}</td>
+                    <td class="text-right">${formatReal(r.bruto)}</td>
+                    <td class="text-right">${formatReal(r.liquido)}</td>
+                </tr>
+            `).join('');
+            
+            document.getElementById('servidorCard').classList.add('show');
+            document.getElementById('servidorCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function fecharServidorCard() {
+            document.getElementById('servidorCard').classList.remove('show');
+        }
+        
+        // Tabs
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            
+            const tabMap = {
+                'visaoGeral': 'tabVisaoGeral',
+                'gabinetes': 'tabGabinetes',
+                'servidores': 'tabServidores',
+                'ranking': 'tabRanking'
+            };
+            
+            document.getElementById(tabMap[tabName]).style.display = 'block';
+            event.target.classList.add('active');
+        }
+        
+        // Pagination
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                updateTableServidores();
+            }
+        }
+        
+        function nextPage() {
+            const totalPages = Math.ceil(filteredData.length / pageSize);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updateTableServidores();
+            }
+        }
+        
+        // Sort
+        function sortServidores(colIndex) {
+            const keys = ['nome', 'categoria', 'lotacao', 'mes', 'bruto', 'liquido'];
+            const key = keys[colIndex];
+            
+            if (sortColumn === colIndex) {
+                sortAsc = !sortAsc;
+            } else {
+                sortColumn = colIndex;
+                sortAsc = true;
+            }
+            
+            filteredData.sort((a, b) => {
+                let va = a[key], vb = b[key];
+                if (typeof va === 'string') {
+                    return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+                }
+                return sortAsc ? va - vb : vb - va;
+            });
+            
+            currentPage = 1;
+            updateTableServidores();
+        }
+        
+        // Export
+        function exportCSV(type) {
+            let csv = '';
+            let filename = '';
+            
+            if (type === 'servidores') {
+                csv = 'Nome,Categoria,Lotação,Mês,Bruto,Líquido\n';
+                filteredData.forEach(s => {
+                    csv += `"${s.nome}","${s.categoria}","${s.lotacao}","${s.mes}",${s.bruto},${s.liquido}\n`;
+                });
+                filename = 'servidores_camara_recife.csv';
+            } else if (type === 'gabinetes') {
+                const gabinetes = {};
+                filteredData.filter(s => s.eGabinete).forEach(s => {
+                    if (!gabinetes[s.gabinete]) gabinetes[s.gabinete] = { total: 0, matriculas: new Set() };
+                    gabinetes[s.gabinete].total += s.bruto;
+                    gabinetes[s.gabinete].matriculas.add(s.matricula);
+                });
+                
+                csv = 'Gabinete,Gasto Anual,Servidores,Custo por Servidor\n';
+                Object.entries(gabinetes).forEach(([nome, data]) => {
+                    csv += `"${nome}",${data.total},${data.matriculas.size},${data.total / data.matriculas.size}\n`;
+                });
+                filename = 'gabinetes_camara_recife.csv';
+            }
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
