@@ -54,4 +54,1265 @@
         .header-badge {
             margin-left: auto;
             background: rgba(255,255,255,0.2);
-            padding: 8
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Cards */
+        .card {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+        }
+        
+        .card h2 {
+            color: #a78bfa;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h3 {
+            color: #e4e4e7;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Steps */
+        .steps {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: #334155;
+            border-radius: 8px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        
+        .step.active {
+            background: linear-gradient(90deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+        }
+        
+        .step.completed {
+            background: #166534;
+            color: #86efac;
+        }
+        
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #4c1d95;
+            border-radius: 12px;
+            padding: 50px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(124, 58, 237, 0.05);
+        }
+        
+        .upload-area:hover {
+            border-color: #7c3aed;
+            background: rgba(124, 58, 237, 0.1);
+        }
+        
+        .upload-area.dragover {
+            border-color: #a78bfa;
+            background: rgba(124, 58, 237, 0.2);
+        }
+        
+        .upload-area .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            color: #a78bfa;
+            margin-bottom: 10px;
+        }
+        
+        .upload-area p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .upload-area input[type="file"] {
+            display: none;
+        }
+        
+        /* Status Messages */
+        .status-message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .status-message.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid #22c55e;
+            color: #86efac;
+        }
+        
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+        
+        .status-message.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid #f59e0b;
+            color: #fde68a;
+        }
+        
+        .status-message.info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #3b82f6;
+            color: #93c5fd;
+        }
+        
+        /* Validation Results */
+        .validation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .validation-item {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .validation-item .icon {
+            font-size: 1.5rem;
+        }
+        
+        .validation-item .label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+        
+        .validation-item .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #e4e4e7;
+        }
+        
+        .validation-item.success .value { color: #22c55e; }
+        .validation-item.error .value { color: #ef4444; }
+        .validation-item.warning .value { color: #f59e0b; }
+        
+        /* Data Preview Table */
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        th {
+            background: #0f172a;
+            color: #a78bfa;
+            padding: 12px 10px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #334155;
+            white-space: nowrap;
+        }
+        
+        tr:hover td {
+            background: rgba(124, 58, 237, 0.05);
+        }
+        
+        tr.duplicate td {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        tr.new td {
+            background: rgba(34, 197, 94, 0.1);
+        }
+        
+        .text-right {
+            text-align: right;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(124, 58, 237, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 5px 20px rgba(34, 197, 94, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #334155;
+            color: #e4e4e7;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        /* Current Data Section */
+        .current-data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .month-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .month-badge {
+            background: #334155;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        
+        .month-badge.has-data {
+            background: #166534;
+            color: #86efac;
+        }
+        
+        .month-badge.selected {
+            background: #7c3aed;
+            color: white;
+        }
+        
+        /* Duplicate Analysis */
+        .duplicate-section {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid #7f1d1d;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .duplicate-section h4 {
+            color: #fca5a5;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Output Section */
+        .output-section {
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .output-section textarea {
+            width: 100%;
+            height: 200px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #e4e4e7;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+        }
+        
+        .output-section textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+        }
+        
+        /* Instructions */
+        .instructions {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid #1e40af;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .instructions h4 {
+            color: #93c5fd;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ol {
+            color: #94a3b8;
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+        
+        .instructions code {
+            background: #1e293b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #a78bfa;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0f172a;
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+            border-top: 1px solid #334155;
+        }
+        
+        .footer p {
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        
+        .footer a {
+            color: #a78bfa;
+            text-decoration: none;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.3rem; }
+            .container { padding: 10px; }
+            .upload-area { padding: 30px; }
+            .steps { flex-direction: column; }
+        }
+        
+        /* Loading */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Highlight animation */
+        @keyframes highlight {
+            0% { background-color: rgba(124, 58, 237, 0.3); }
+            100% { background-color: transparent; }
+        }
+        
+        .highlight-row {
+            animation: highlight 2s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <span class="header-logo">⚙️</span>
+            <div>
+                <h1>Painel Administrativo - Gestão de Dados</h1>
+                <p>Câmara Municipal do Recife - Upload e Validação</p>
+            </div>
+            <span class="header-badge">🔒 Área Restrita</span>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- Steps -->
+        <div class="steps">
+            <div class="step active" id="step1">
+                <span class="step-number">1</span>
+                <span>Carregar Dados Atuais</span>
+            </div>
+            <div class="step" id="step2">
+                <span class="step-number">2</span>
+                <span>Upload Novo Arquivo</span>
+            </div>
+            <div class="step" id="step3">
+                <span class="step-number">3</span>
+                <span>Validação</span>
+            </div>
+            <div class="step" id="step4">
+                <span class="step-number">4</span>
+                <span>Gerar Atualização</span>
+            </div>
+        </div>
+        
+        <!-- Step 1: Current Data -->
+        <div class="card" id="cardStep1">
+            <h2>📊 Passo 1: Dados Atuais no Google Sheets</h2>
+            
+            <p style="color: #94a3b8; margin-bottom: 20px;">
+                Primeiro, precisamos carregar os dados atuais para verificar duplicidade. 
+                Cole a URL do Google Sheets ou clique em carregar se já estiver configurado.
+            </p>
+            
+            <div class="filter-group" style="margin-bottom: 20px;">
+                <label style="color: #94a3b8; font-size: 0.8rem; display: block; margin-bottom: 8px;">URL do Google Sheets (CSV)</label>
+                <input type="text" id="sheetsUrl" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv" 
+                    style="width: 100%; padding: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #e4e4e7; font-size: 0.9rem;">
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="loadCurrentData()">
+                    📥 Carregar Dados Atuais
+                </button>
+            </div>
+            
+            <div id="currentDataStatus"></div>
+            
+            <div id="currentDataSummary" style="display: none;">
+                <h3 style="margin-top: 25px; margin-bottom: 15px;">📈 Resumo dos Dados Atuais</h3>
+                
+                <div class="validation-grid">
+                    <div class="validation-item">
+                        <span class="icon">📋</span>
+                        <div>
+                            <div class="label">Total de Registros</div>
+                            <div class="value" id="currentTotal">-</div>
+                        </div>
+                    </div>
+                    <div class="validation-item">
+                        <span class="icon">👥</span>
+                        <div>
+                            <div class="label">Servidores Únicos</div>
+                            <div class="value" id="currentServidores">-</div>
+                        </div>
+                    </div>
+                    <div class="validation-item">
+                        <span class="icon">📅</span>
+                        <div>
+                            <div class="label">Meses Carregados</div>
+                            <div class="value" id="currentMeses">-</div>
+                        </div>
+                    </div>
+                    <div class="validation-item">
+                        <span class="icon">💰</span>
+                        <div>
+                            <div class="label">Total Bruto</div>
+                            <div class="value" id="currentBruto">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4 style="color: #94a3b8; margin: 20px 0 10px;">Meses com dados:</h4>
+                <div class="month-badges" id="monthBadges"></div>
+            </div>
+        </div>
+        
+        <!-- Step 2: Upload -->
+        <div class="card" id="cardStep2" style="display: none;">
+            <h2>📤 Passo 2: Upload de Novo Arquivo</h2>
+            
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <input type="file" id="fileInput" accept=".xls,.xlsx,.csv" onchange="handleFileUpload(event)">
+                <div class="icon">📁</div>
+                <h3>Arraste o arquivo aqui ou clique para selecionar</h3>
+                <p>Formatos aceitos: .xls, .xlsx, .csv</p>
+                <p style="margin-top: 10px; color: #a78bfa;">Arquivos do Portal da Transparência da Câmara</p>
+            </div>
+            
+            <div id="uploadStatus"></div>
+        </div>
+        
+        <!-- Step 3: Validation -->
+        <div class="card" id="cardStep3" style="display: none;">
+            <h2>✅ Passo 3: Validação dos Dados</h2>
+            
+            <div id="validationResults"></div>
+            
+            <div id="duplicateSection" style="display: none;">
+                <div class="duplicate-section">
+                    <h4>⚠️ Registros Duplicados Detectados</h4>
+                    <p style="color: #fca5a5; margin-bottom: 15px;">
+                        Os seguintes registros já existem na base atual e serão <strong>ignorados</strong>:
+                    </p>
+                    <div class="table-wrapper" style="max-height: 200px;">
+                        <table id="tableDuplicates">
+                            <thead>
+                                <tr>
+                                    <th>Matrícula</th>
+                                    <th>Nome</th>
+                                    <th>Mês</th>
+                                    <th>Motivo</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="newRecordsSection" style="display: none;">
+                <h3 style="margin: 25px 0 15px; color: #22c55e;">✅ Novos Registros a Adicionar</h3>
+                <div class="table-wrapper">
+                    <table id="tableNewRecords">
+                        <thead>
+                            <tr>
+                                <th>Matrícula</th>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Cargo</th>
+                                <th>Lotação</th>
+                                <th>Mês</th>
+                                <th class="text-right">Bruto</th>
+                                <th class="text-right">Líquido</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="resetUpload()">
+                    ← Voltar e Escolher Outro Arquivo
+                </button>
+                <button class="btn btn-success" id="btnGenerate" onclick="generateOutput()" disabled>
+                    Gerar Dados para Google Sheets →
+                </button>
+            </div>
+        </div>
+        
+        <!-- Step 4: Output -->
+        <div class="card" id="cardStep4" style="display: none;">
+            <h2>📋 Passo 4: Atualizar Google Sheets</h2>
+            
+            <div class="status-message success">
+                <span>✅</span>
+                <div>
+                    <strong>Dados prontos!</strong> 
+                    <span id="outputSummary">0 novos registros para adicionar.</span>
+                </div>
+            </div>
+            
+            <div class="instructions">
+                <h4>📝 Instruções para atualizar o Google Sheets:</h4>
+                <ol>
+                    <li>Clique no botão <strong>"Copiar Dados"</strong> abaixo</li>
+                    <li>Abra sua planilha no <a href="https://docs.google.com/spreadsheets" target="_blank">Google Sheets</a></li>
+                    <li>Vá para a <strong>última linha</strong> com dados</li>
+                    <li>Clique na célula A da <strong>próxima linha vazia</strong></li>
+                    <li>Cole os dados (<code>Ctrl+V</code> ou <code>Cmd+V</code>)</li>
+                    <li>Verifique se os dados foram colados corretamente</li>
+                    <li>O dashboard será atualizado automaticamente!</li>
+                </ol>
+            </div>
+            
+            <div class="output-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h4 style="color: #a78bfa;">Dados formatados (TSV - Tab Separated Values):</h4>
+                    <button class="btn btn-primary" onclick="copyToClipboard()">
+                        📋 Copiar Dados
+                    </button>
+                </div>
+                <textarea id="outputData" readonly placeholder="Os dados aparecerão aqui..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="downloadCSV()">
+                    💾 Baixar como CSV
+                </button>
+                <button class="btn btn-success" onclick="finishProcess()">
+                    ✅ Concluir e Reiniciar
+                </button>
+            </div>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="card">
+            <h2>❓ Ajuda e Informações</h2>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <div>
+                    <h4 style="color: #a78bfa; margin-bottom: 10px;">🔍 Validações Realizadas</h4>
+                    <ul style="color: #94a3b8; padding-left: 20px; line-height: 1.8;">
+                        <li>Verificação de mês já existente na base</li>
+                        <li>Detecção de matrícula + mês duplicados</li>
+                        <li>Validação de valores numéricos</li>
+                        <li>Verificação de campos obrigatórios</li>
+                        <li>Detecção de formato de arquivo incorreto</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: #a78bfa; margin-bottom: 10px;">📁 Formatos Aceitos</h4>
+                    <ul style="color: #94a3b8; padding-left: 20px; line-height: 1.8;">
+                        <li><strong>.xls / .xlsx</strong> - Arquivos do Portal da Transparência</li>
+                        <li><strong>.csv</strong> - Arquivos CSV com separador vírgula ou ponto-e-vírgula</li>
+                    </ul>
+                    <p style="color: #64748b; margin-top: 10px; font-size: 0.85rem;">
+                        O sistema reconhece automaticamente o formato do Portal da Câmara do Recife.
+                    </p>
+                </div>
+                <div>
+                    <h4 style="color: #a78bfa; margin-bottom: 10px;">⚠️ Problemas Comuns</h4>
+                    <ul style="color: #94a3b8; padding-left: 20px; line-height: 1.8;">
+                        <li><strong>Mês já existe:</strong> Arquivo já foi importado anteriormente</li>
+                        <li><strong>Formato inválido:</strong> Arquivo não é do Portal da Câmara</li>
+                        <li><strong>Dados parciais:</strong> Apenas novos registros serão adicionados</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>⚙️ Painel Administrativo | Dashboard Câmara Municipal do Recife</p>
+        <p style="margin-top: 10px;">
+            <a href="index.html">← Voltar ao Dashboard</a>
+        </p>
+    </div>
+    
+    <script>
+        // ==========================================
+        // CONFIGURAÇÃO
+        // ==========================================
+        const DEFAULT_SHEETS_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTpMvVNqUlweOAtA30hkSGAIVP6eAHekN33cubpEKXXok5oDYajwxfyx5ZG06C5VnrghdQLJ_mcimHv/pub?gid=357192540&single=true&output=csv';
+        
+        const MESES_ORDEM = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+                            'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        
+        // Estado da aplicação
+        let currentData = [];
+        let currentDataByKey = new Map();
+        let newFileData = [];
+        let validatedNewRecords = [];
+        let duplicateRecords = [];
+        let detectedMonth = '';
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('sheetsUrl').value = DEFAULT_SHEETS_URL;
+            setupDragAndDrop();
+        });
+        
+        // ==========================================
+        // PASSO 1: CARREGAR DADOS ATUAIS
+        // ==========================================
+        
+        async function loadCurrentData() {
+            const url = document.getElementById('sheetsUrl').value.trim();
+            const statusDiv = document.getElementById('currentDataStatus');
+            
+            if (!url) {
+                showStatus(statusDiv, 'error', 'Por favor, insira a URL do Google Sheets.');
+                return;
+            }
+            
+            showStatus(statusDiv, 'info', '<span class="loading"></span> Carregando dados atuais...');
+            
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Erro ao acessar Google Sheets');
+                
+                const csvText = await response.text();
+                currentData = parseCSV(csvText);
+                
+                // Criar índice para busca rápida (matrícula + mês)
+                currentDataByKey.clear();
+                currentData.forEach(row => {
+                    const key = `${row.matricula}_${row.mes}`;
+                    currentDataByKey.set(key, row);
+                });
+                
+                // Calcular estatísticas
+                const matriculasUnicas = new Set(currentData.map(r => r.matricula));
+                const mesesUnicos = [...new Set(currentData.map(r => r.mes))];
+                const totalBruto = currentData.reduce((sum, r) => sum + r.bruto, 0);
+                
+                // Atualizar UI
+                document.getElementById('currentTotal').textContent = currentData.length.toLocaleString();
+                document.getElementById('currentServidores').textContent = matriculasUnicas.size.toLocaleString();
+                document.getElementById('currentMeses').textContent = mesesUnicos.length;
+                document.getElementById('currentBruto').textContent = formatReal(totalBruto);
+                
+                // Badges de meses
+                const badgesHtml = MESES_ORDEM.map(mes => {
+                    const hasData = mesesUnicos.includes(mes);
+                    return `<span class="month-badge ${hasData ? 'has-data' : ''}">${mes} ${hasData ? '✓' : ''}</span>`;
+                }).join('');
+                document.getElementById('monthBadges').innerHTML = badgesHtml;
+                
+                document.getElementById('currentDataSummary').style.display = 'block';
+                showStatus(statusDiv, 'success', `✅ ${currentData.length.toLocaleString()} registros carregados com sucesso!`);
+                
+                // Avançar para próximo passo
+                updateStep(2);
+                document.getElementById('cardStep2').style.display = 'block';
+                
+            } catch (error) {
+                console.error(error);
+                showStatus(statusDiv, 'error', `❌ Erro: ${error.message}`);
+            }
+        }
+        
+        // ==========================================
+        // PASSO 2: UPLOAD DE ARQUIVO
+        // ==========================================
+        
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file) processFile(file);
+            });
+        }
+        
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) processFile(file);
+        }
+        
+        async function processFile(file) {
+            const statusDiv = document.getElementById('uploadStatus');
+            showStatus(statusDiv, 'info', `<span class="loading"></span> Processando ${file.name}...`);
+            
+            try {
+                const extension = file.name.split('.').pop().toLowerCase();
+                
+                if (extension === 'csv') {
+                    const text = await file.text();
+                    newFileData = parseCSV(text);
+                } else if (extension === 'xls' || extension === 'xlsx') {
+                    newFileData = await parseExcel(file);
+                } else {
+                    throw new Error('Formato de arquivo não suportado');
+                }
+                
+                if (newFileData.length === 0) {
+                    throw new Error('Nenhum dado encontrado no arquivo');
+                }
+                
+                // Detectar mês
+                detectedMonth = newFileData[0]?.mes || 'Desconhecido';
+                
+                showStatus(statusDiv, 'success', 
+                    `✅ Arquivo processado: ${newFileData.length} registros encontrados (${detectedMonth})`);
+                
+                // Avançar para validação
+                validateData();
+                
+            } catch (error) {
+                console.error(error);
+                showStatus(statusDiv, 'error', `❌ Erro ao processar arquivo: ${error.message}`);
+            }
+        }
+        
+        async function parseExcel(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' });
+                        const sheetName = workbook.SheetNames[0];
+                        const sheet = workbook.Sheets[sheetName];
+                        
+                        // Converter para JSON
+                        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                        
+                        // Encontrar linha de cabeçalho (procurar por "CPF" ou "Matrícula")
+                        let headerRow = -1;
+                        for (let i = 0; i < Math.min(10, jsonData.length); i++) {
+                            const row = jsonData[i];
+                            if (row && (row.includes('CPF') || row.includes('Matrícula'))) {
+                                headerRow = i;
+                                break;
+                            }
+                        }
+                        
+                        if (headerRow === -1) {
+                            throw new Error('Formato de arquivo não reconhecido');
+                        }
+                        
+                        // Detectar mês do arquivo (geralmente na linha 1 ou 2)
+                        let mesArquivo = '';
+                        for (let i = 0; i < headerRow; i++) {
+                            const row = jsonData[i];
+                            if (row) {
+                                const texto = row.join(' ');
+                                const matchMes = texto.match(/PERÍODO:\s*(\w+)\s*de\s*(\d{4})/i);
+                                if (matchMes) {
+                                    mesArquivo = matchMes[1];
+                                    break;
+                                }
+                                // Tentar encontrar nome do mês
+                                MESES_ORDEM.forEach(mes => {
+                                    if (texto.includes(mes)) mesArquivo = mes;
+                                });
+                            }
+                        }
+                        
+                        // Processar dados
+                        const registros = [];
+                        for (let i = headerRow + 1; i < jsonData.length; i++) {
+                            const row = jsonData[i];
+                            if (!row || !row[1]) continue; // Pular linhas vazias
+                            
+                            // Estrutura: CPF, Matrícula, Nome, Categoria, Cargo, Função, Total Vantagens, Descontos, Líquido, Lotação, ...
+                            const matricula = String(row[1] || '').trim();
+                            const nome = String(row[2] || '').trim();
+                            const categoria = String(row[3] || '').trim();
+                            const cargo = String(row[4] || '').trim();
+                            const funcao = String(row[5] || '').trim();
+                            const bruto = parseFloat(String(row[6] || '0').replace(',', '.')) || 0;
+                            const liquido = parseFloat(String(row[8] || '0').replace(',', '.')) || 0;
+                            const lotacao = String(row[9] || '').trim();
+                            
+                            if (matricula && nome && bruto > 0) {
+                                registros.push({
+                                    matricula,
+                                    nome,
+                                    categoria,
+                                    cargo,
+                                    funcao,
+                                    bruto,
+                                    liquido,
+                                    lotacao,
+                                    mes: mesArquivo
+                                });
+                            }
+                        }
+                        
+                        resolve(registros);
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                
+                reader.onerror = () => reject(new Error('Erro ao ler arquivo'));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+        
+        // ==========================================
+        // PASSO 3: VALIDAÇÃO
+        // ==========================================
+        
+        function validateData() {
+            const resultsDiv = document.getElementById('validationResults');
+            
+            validatedNewRecords = [];
+            duplicateRecords = [];
+            
+            // Verificar cada registro
+            newFileData.forEach(record => {
+                const key = `${record.matricula}_${record.mes}`;
+                
+                if (currentDataByKey.has(key)) {
+                    // Duplicado
+                    duplicateRecords.push({
+                        ...record,
+                        motivo: 'Matrícula + Mês já existe'
+                    });
+                } else {
+                    // Novo registro
+                    validatedNewRecords.push(record);
+                }
+            });
+            
+            // Verificar se o mês já existe completamente
+            const mesesAtuais = [...new Set(currentData.map(r => r.mes))];
+            const mesJaExiste = mesesAtuais.includes(detectedMonth);
+            
+            // Mostrar resultados
+            let html = '<div class="validation-grid">';
+            
+            html += `
+                <div class="validation-item ${validatedNewRecords.length > 0 ? 'success' : 'warning'}">
+                    <span class="icon">✅</span>
+                    <div>
+                        <div class="label">Novos Registros</div>
+                        <div class="value">${validatedNewRecords.length}</div>
+                    </div>
+                </div>
+            `;
+            
+            html += `
+                <div class="validation-item ${duplicateRecords.length > 0 ? 'error' : 'success'}">
+                    <span class="icon">${duplicateRecords.length > 0 ? '⚠️' : '✅'}</span>
+                    <div>
+                        <div class="label">Duplicados</div>
+                        <div class="value">${duplicateRecords.length}</div>
+                    </div>
+                </div>
+            `;
+            
+            html += `
+                <div class="validation-item ${mesJaExiste ? 'warning' : 'success'}">
+                    <span class="icon">📅</span>
+                    <div>
+                        <div class="label">Mês Detectado</div>
+                        <div class="value">${detectedMonth}</div>
+                    </div>
+                </div>
+            `;
+            
+            const totalBrutoNovo = validatedNewRecords.reduce((sum, r) => sum + r.bruto, 0);
+            html += `
+                <div class="validation-item">
+                    <span class="icon">💰</span>
+                    <div>
+                        <div class="label">Total Bruto (Novos)</div>
+                        <div class="value">${formatReal(totalBrutoNovo)}</div>
+                    </div>
+                </div>
+            `;
+            
+            html += '</div>';
+            
+            // Alertas
+            if (mesJaExiste && validatedNewRecords.length > 0) {
+                html += `
+                    <div class="status-message warning">
+                        <span>⚠️</span>
+                        <div>
+                            <strong>Atenção:</strong> O mês <strong>${detectedMonth}</strong> já possui dados na base. 
+                            Apenas ${validatedNewRecords.length} registros novos serão adicionados.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (mesJaExiste && validatedNewRecords.length === 0) {
+                html += `
+                    <div class="status-message error">
+                        <span>❌</span>
+                        <div>
+                            <strong>Arquivo já importado!</strong> Todos os registros de <strong>${detectedMonth}</strong> 
+                            já existem na base de dados. Nenhum dado novo para adicionar.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (validatedNewRecords.length > 0) {
+                html += `
+                    <div class="status-message success">
+                        <span>✅</span>
+                        <div>
+                            <strong>${validatedNewRecords.length} registros</strong> prontos para serem adicionados ao Google Sheets.
+                        </div>
+                    </div>
+                `;
+            }
+            
+            resultsDiv.innerHTML = html;
+            
+            // Mostrar duplicados
+            if (duplicateRecords.length > 0) {
+                document.getElementById('duplicateSection').style.display = 'block';
+                const tbody = document.querySelector('#tableDuplicates tbody');
+                tbody.innerHTML = duplicateRecords.slice(0, 50).map(r => `
+                    <tr class="duplicate">
+                        <td>${r.matricula}</td>
+                        <td>${r.nome}</td>
+                        <td>${r.mes}</td>
+                        <td>${r.motivo}</td>
+                    </tr>
+                `).join('');
+                
+                if (duplicateRecords.length > 50) {
+                    tbody.innerHTML += `<tr><td colspan="4" style="text-align: center; color: #94a3b8;">... e mais ${duplicateRecords.length - 50} registros</td></tr>`;
+                }
+            } else {
+                document.getElementById('duplicateSection').style.display = 'none';
+            }
+            
+            // Mostrar novos registros
+            if (validatedNewRecords.length > 0) {
+                document.getElementById('newRecordsSection').style.display = 'block';
+                const tbody = document.querySelector('#tableNewRecords tbody');
+                tbody.innerHTML = validatedNewRecords.slice(0, 50).map(r => `
+                    <tr class="new">
+                        <td>${r.matricula}</td>
+                        <td>${r.nome}</td>
+                        <td>${r.categoria}</td>
+                        <td>${r.cargo}</td>
+                        <td>${r.lotacao}</td>
+                        <td>${r.mes}</td>
+                        <td class="text-right">${formatReal(r.bruto)}</td>
+                        <td class="text-right">${formatReal(r.liquido)}</td>
+                    </tr>
+                `).join('');
+                
+                if (validatedNewRecords.length > 50) {
+                    tbody.innerHTML += `<tr><td colspan="8" style="text-align: center; color: #94a3b8;">... e mais ${validatedNewRecords.length - 50} registros</td></tr>`;
+                }
+                
+                document.getElementById('btnGenerate').disabled = false;
+            } else {
+                document.getElementById('newRecordsSection').style.display = 'none';
+                document.getElementById('btnGenerate').disabled = true;
+            }
+            
+            // Mostrar card de validação
+            updateStep(3);
+            document.getElementById('cardStep3').style.display = 'block';
+            document.getElementById('cardStep3').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function resetUpload() {
+            document.getElementById('fileInput').value = '';
+            document.getElementById('uploadStatus').innerHTML = '';
+            document.getElementById('cardStep3').style.display = 'none';
+            newFileData = [];
+            validatedNewRecords = [];
+            duplicateRecords = [];
+            updateStep(2);
+        }
+        
+        // ==========================================
+        // PASSO 4: GERAR OUTPUT
+        // ==========================================
+        
+        function generateOutput() {
+            if (validatedNewRecords.length === 0) return;
+            
+            // Gerar TSV (Tab Separated Values) - melhor para colar no Google Sheets
+            const lines = validatedNewRecords.map(r => 
+                [r.matricula, r.nome, r.categoria, r.cargo, r.funcao, r.bruto, r.liquido, r.lotacao, r.mes].join('\t')
+            );
+            
+            const output = lines.join('\n');
+            document.getElementById('outputData').value = output;
+            
+            document.getElementById('outputSummary').textContent = 
+                `${validatedNewRecords.length} novos registros de ${detectedMonth} prontos para adicionar.`;
+            
+            updateStep(4);
+            document.getElementById('cardStep4').style.display = 'block';
+            document.getElementById('cardStep4').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function copyToClipboard() {
+            const textarea = document.getElementById('outputData');
+            textarea.select();
+            document.execCommand('copy');
+            
+            // Feedback visual
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ Copiado!';
+            btn.style.background = 'linear-gradient(90deg, #22c55e 0%, #16a34a 100%)';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '';
+            }, 2000);
+        }
+        
+        function downloadCSV() {
+            const csv = 'Matricula,Nome,Categoria,Cargo,Funcao,Bruto,Liquido,Lotacao,Mes\n' + 
+                validatedNewRecords.map(r => 
+                    `"${r.matricula}","${r.nome}","${r.categoria}","${r.cargo}","${r.funcao}",${r.bruto},${r.liquido},"${r.lotacao}","${r.mes}"`
+                ).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `novos_registros_${detectedMonth.toLowerCase()}_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        }
+        
+        function finishProcess() {
+            // Resetar tudo
+            document.getElementById('fileInput').value = '';
+            document.getElementById('uploadStatus').innerHTML = '';
+            document.getElementById('cardStep3').style.display = 'none';
+            document.getElementById('cardStep4').style.display = 'none';
+            newFileData = [];
+            validatedNewRecords = [];
+            duplicateRecords = [];
+            
+            // Recarregar dados atuais
+            loadCurrentData();
+            
+            // Scroll para o topo
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // ==========================================
+        // UTILITÁRIOS
+        // ==========================================
+        
+        function parseCSV(csvText) {
+            const lines = csvText.trim().split('\n');
+            if (lines.length < 2) return [];
+            
+            const registros = [];
+            for (let i = 1; i < lines.length; i++) {
+                const values = parseCSVLine(lines[i]);
+                if (values.length >= 9) {
+                    registros.push({
+                        matricula: values[0]?.trim() || '',
+                        nome: values[1]?.trim() || '',
+                        categoria: values[2]?.trim() || '',
+                        cargo: values[3]?.trim() || '',
+                        funcao: values[4]?.trim() || '',
+                        bruto: parseFloat(values[5]?.replace(',', '.')) || 0,
+                        liquido: parseFloat(values[6]?.replace(',', '.')) || 0,
+                        lotacao: values[7]?.trim() || '',
+                        mes: values[8]?.trim() || ''
+                    });
+                }
+            }
+            
+            return registros;
+        }
+        
+        function parseCSVLine(line) {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            
+            return result;
+        }
+        
+        function formatReal(valor) {
+            return 'R$ ' + valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+        
+        function showStatus(container, type, message) {
+            container.innerHTML = `<div class="status-message ${type}">${message}</div>`;
+        }
+        
+        function updateStep(activeStep) {
+            for (let i = 1; i <= 4; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                stepEl.classList.remove('active', 'completed');
+                
+                if (i < activeStep) {
+                    stepEl.classList.add('completed');
+                } else if (i === activeStep) {
+                    stepEl.classList.add('active');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
