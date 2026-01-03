@@ -795,6 +795,7 @@
             <button class="tab" onclick="showTab('gabinetes')">🏛️ Gabinetes</button>
             <button class="tab" onclick="showTab('servidores')">👥 Servidores</button>
             <button class="tab" onclick="showTab('ranking')">🏆 Rankings</button>
+            <button class="tab" onclick="showTab('decimoTerceiro')">🎄 13º Salário</button>
         </div>
         
         <!-- Tab: Visão Geral -->
@@ -925,6 +926,89 @@
                             <tbody></tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: 13º Salário -->
+        <div id="tabDecimoTerceiro" class="tab-content" style="display: none;">
+            <!-- KPIs do 13º -->
+            <div class="kpi-grid" style="margin-bottom: 25px;">
+                <div class="kpi-card" style="border-color: #f59e0b;">
+                    <div class="label">Estimativa 13º Total</div>
+                    <div class="value" id="kpi13Total" style="color: #f59e0b;">-</div>
+                    <div class="sub">Valor excedente em Nov/Dez</div>
+                </div>
+                <div class="kpi-card" style="border-color: #f59e0b;">
+                    <div class="label">Servidores com 13º</div>
+                    <div class="value" id="kpi13Servidores" style="color: #f59e0b;">-</div>
+                    <div class="sub">Detectados com pagamento extra</div>
+                </div>
+                <div class="kpi-card" style="border-color: #f59e0b;">
+                    <div class="label">Média 13º</div>
+                    <div class="value" id="kpi13Media" style="color: #f59e0b;">-</div>
+                    <div class="sub">Por servidor</div>
+                </div>
+                <div class="kpi-card" style="border-color: #f59e0b;">
+                    <div class="label">Maior 13º</div>
+                    <div class="value" id="kpi13Maior" style="color: #f59e0b;">-</div>
+                    <div class="sub" id="kpi13MaiorNome">-</div>
+                </div>
+            </div>
+            
+            <!-- Explicação -->
+            <div class="table-section" style="background: linear-gradient(145deg, #78350f 0%, #451a03 100%); border-color: #f59e0b; margin-bottom: 25px;">
+                <h3 style="color: #fbbf24; margin-bottom: 10px;">ℹ️ Como funciona a detecção do 13º Salário</h3>
+                <p style="color: #fde68a; font-size: 0.9rem; line-height: 1.6;">
+                    Como o arquivo original não separa o 13º salário, utilizamos uma <strong>análise comparativa</strong>: 
+                    calculamos a média salarial de cada servidor (excluindo Novembro e Dezembro) e comparamos com os valores 
+                    recebidos nesses meses. Quando o valor de Nov/Dez é significativamente maior que a média (acima de 50%), 
+                    identificamos como provável pagamento de 13º. O <strong>valor estimado do 13º</strong> é a diferença entre 
+                    o valor recebido e a média normal.
+                </p>
+            </div>
+            
+            <div class="charts-grid">
+                <!-- Gráfico comparativo -->
+                <div class="chart-card">
+                    <h3>📊 Comparativo: Folha Normal vs Meses com 13º</h3>
+                    <div class="chart-container">
+                        <canvas id="chart13Comparativo"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Gráfico por categoria -->
+                <div class="chart-card">
+                    <h3>🎄 Estimativa de 13º por Categoria</h3>
+                    <div class="chart-container">
+                        <canvas id="chart13Categoria"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tabela de servidores com 13º -->
+            <div class="table-section">
+                <div class="table-header">
+                    <h3>🎄 Servidores com Provável 13º Salário</h3>
+                    <div class="export-buttons">
+                        <button class="btn btn-export" onclick="exportCSV('decimo')">📥 Exportar CSV</button>
+                    </div>
+                </div>
+                <div class="table-wrapper" style="max-height: 500px;">
+                    <table id="tableDecimoTerceiro">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Categoria</th>
+                                <th>Lotação</th>
+                                <th class="text-right">Média Normal</th>
+                                <th class="text-right">Valor Nov/Dez</th>
+                                <th class="text-right" style="color: #f59e0b;">Estimativa 13º</th>
+                                <th class="text-right">Variação %</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1556,11 +1640,17 @@
                 'visaoGeral': 'tabVisaoGeral',
                 'gabinetes': 'tabGabinetes',
                 'servidores': 'tabServidores',
-                'ranking': 'tabRanking'
+                'ranking': 'tabRanking',
+                'decimoTerceiro': 'tabDecimoTerceiro'
             };
             
             document.getElementById(tabMap[tabName]).style.display = 'block';
             event.target.classList.add('active');
+            
+            // Atualizar análise de 13º quando a tab for selecionada
+            if (tabName === 'decimoTerceiro') {
+                updateAnalise13();
+            }
         }
         
         // Pagination
@@ -1627,6 +1717,13 @@
                     csv += `"${nome}",${data.total},${data.matriculas.size},${data.total / data.matriculas.size}\n`;
                 });
                 filename = 'gabinetes_camara_recife.csv';
+            } else if (type === 'decimo') {
+                const analise = calcularAnalise13();
+                csv = 'Nome,Categoria,Lotação,Média Normal,Valor Nov/Dez,Estimativa 13º,Variação %\n';
+                analise.servidores.forEach(s => {
+                    csv += `"${s.nome}","${s.categoria}","${s.lotacao}",${s.mediaNormal.toFixed(2)},${s.valorNovDez.toFixed(2)},${s.estimativa13.toFixed(2)},${s.variacao.toFixed(1)}\n`;
+                });
+                filename = 'decimo_terceiro_camara_recife.csv';
             }
             
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1634,6 +1731,249 @@
             link.href = URL.createObjectURL(blob);
             link.download = filename;
             link.click();
+        }
+        
+        // ==========================================
+        // ANÁLISE DE 13º SALÁRIO
+        // ==========================================
+        
+        let analise13Cache = null;
+        let chart13Comparativo = null;
+        let chart13Categoria = null;
+        
+        function calcularAnalise13() {
+            if (analise13Cache) return analise13Cache;
+            
+            // Agrupar por matrícula
+            const porMatricula = {};
+            DATA.servidores.forEach(s => {
+                if (!porMatricula[s.matricula]) {
+                    porMatricula[s.matricula] = {
+                        nome: s.nome,
+                        categoria: s.categoria,
+                        lotacao: s.lotacao,
+                        meses: {}
+                    };
+                }
+                porMatricula[s.matricula].meses[s.mes] = s.bruto;
+            });
+            
+            const servidoresComDecimo = [];
+            
+            Object.entries(porMatricula).forEach(([matricula, dados]) => {
+                const meses = dados.meses;
+                
+                // Calcular média excluindo Nov e Dez
+                const mesesNormais = Object.entries(meses)
+                    .filter(([mes]) => mes !== 'Novembro' && mes !== 'Dezembro')
+                    .map(([, valor]) => valor);
+                
+                if (mesesNormais.length < 3) return; // Precisa de pelo menos 3 meses para comparar
+                
+                const mediaNormal = mesesNormais.reduce((a, b) => a + b, 0) / mesesNormais.length;
+                
+                // Verificar Nov e Dez
+                const valorNov = meses['Novembro'] || 0;
+                const valorDez = meses['Dezembro'] || 0;
+                const valorNovDez = Math.max(valorNov, valorDez); // Pegar o maior
+                const mesRef = valorNov > valorDez ? 'Novembro' : 'Dezembro';
+                
+                if (valorNovDez === 0) return;
+                
+                // Calcular variação
+                const variacao = ((valorNovDez - mediaNormal) / mediaNormal) * 100;
+                
+                // Se variação > 50%, provavelmente tem 13º
+                if (variacao > 50) {
+                    const estimativa13 = valorNovDez - mediaNormal;
+                    servidoresComDecimo.push({
+                        matricula,
+                        nome: dados.nome,
+                        categoria: dados.categoria,
+                        lotacao: dados.lotacao,
+                        mediaNormal,
+                        valorNovDez,
+                        mesRef,
+                        estimativa13,
+                        variacao
+                    });
+                }
+            });
+            
+            // Ordenar por estimativa de 13º (maior primeiro)
+            servidoresComDecimo.sort((a, b) => b.estimativa13 - a.estimativa13);
+            
+            // Calcular totais
+            const total13 = servidoresComDecimo.reduce((sum, s) => sum + s.estimativa13, 0);
+            const media13 = servidoresComDecimo.length > 0 ? total13 / servidoresComDecimo.length : 0;
+            const maior = servidoresComDecimo[0] || { estimativa13: 0, nome: '-' };
+            
+            // Por categoria
+            const porCategoria = {};
+            servidoresComDecimo.forEach(s => {
+                if (!porCategoria[s.categoria]) porCategoria[s.categoria] = 0;
+                porCategoria[s.categoria] += s.estimativa13;
+            });
+            
+            analise13Cache = {
+                servidores: servidoresComDecimo,
+                total: total13,
+                media: media13,
+                maior,
+                porCategoria
+            };
+            
+            return analise13Cache;
+        }
+        
+        function updateAnalise13() {
+            const analise = calcularAnalise13();
+            
+            // Atualizar KPIs
+            document.getElementById('kpi13Total').textContent = formatCompact(analise.total);
+            document.getElementById('kpi13Servidores').textContent = analise.servidores.length.toLocaleString();
+            document.getElementById('kpi13Media').textContent = formatReal(analise.media);
+            document.getElementById('kpi13Maior').textContent = formatReal(analise.maior.estimativa13);
+            document.getElementById('kpi13MaiorNome').textContent = analise.maior.nome?.substring(0, 25) || '-';
+            
+            // Atualizar tabela
+            const tbody = document.querySelector('#tableDecimoTerceiro tbody');
+            tbody.innerHTML = analise.servidores.slice(0, 100).map(s => `
+                <tr onclick="mostrarServidorCard('${s.nome.replace(/'/g, "\\'")}')">
+                    <td>${s.nome}</td>
+                    <td>${s.categoria}</td>
+                    <td>${s.lotacao}</td>
+                    <td class="text-right">${formatReal(s.mediaNormal)}</td>
+                    <td class="text-right">${formatReal(s.valorNovDez)}</td>
+                    <td class="text-right" style="color: #f59e0b; font-weight: 600;">${formatReal(s.estimativa13)}</td>
+                    <td class="text-right" style="color: ${s.variacao > 80 ? '#ef4444' : '#22c55e'};">+${s.variacao.toFixed(0)}%</td>
+                </tr>
+            `).join('');
+            
+            // Atualizar gráficos
+            updateChart13Comparativo();
+            updateChart13Categoria(analise);
+        }
+        
+        function updateChart13Comparativo() {
+            const ctx = document.getElementById('chart13Comparativo').getContext('2d');
+            
+            // Calcular totais por mês
+            const totaisPorMes = {};
+            MESES_ORDEM.forEach(mes => {
+                totaisPorMes[mes] = DATA.servidores
+                    .filter(s => s.mes === mes)
+                    .reduce((sum, s) => sum + s.bruto, 0);
+            });
+            
+            // Média dos meses normais (excluindo Nov/Dez)
+            const mesesNormais = MESES_ORDEM.slice(0, 10); // Jan-Out
+            const mediaMensal = mesesNormais.reduce((sum, mes) => sum + totaisPorMes[mes], 0) / mesesNormais.length;
+            
+            if (chart13Comparativo) chart13Comparativo.destroy();
+            
+            chart13Comparativo = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: MESES_ORDEM.map(m => m.substring(0, 3)),
+                    datasets: [
+                        {
+                            label: 'Folha Real',
+                            data: MESES_ORDEM.map(mes => totaisPorMes[mes]),
+                            backgroundColor: MESES_ORDEM.map(mes => 
+                                (mes === 'Novembro' || mes === 'Dezembro') ? '#f59e0b' : '#00d9ff'
+                            ),
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Média Normal (Jan-Out)',
+                            data: MESES_ORDEM.map(() => mediaMensal),
+                            type: 'line',
+                            borderColor: '#ef4444',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#e4e4e7' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${formatReal(ctx.raw)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: (v) => formatCompact(v)
+                            },
+                            grid: { color: '#334155' }
+                        },
+                        x: {
+                            ticks: { color: '#94a3b8' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChart13Categoria(analise) {
+            const ctx = document.getElementById('chart13Categoria').getContext('2d');
+            
+            const sorted = Object.entries(analise.porCategoria)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 6);
+            
+            if (chart13Categoria) chart13Categoria.destroy();
+            
+            chart13Categoria = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(([cat]) => cat.substring(0, 20)),
+                    datasets: [{
+                        label: 'Estimativa 13º',
+                        data: sorted.map(([, val]) => val),
+                        backgroundColor: '#f59e0b',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => formatReal(ctx.raw)
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { 
+                                color: '#94a3b8',
+                                callback: (v) => formatCompact(v)
+                            },
+                            grid: { color: '#334155' }
+                        },
+                        y: {
+                            ticks: { color: '#94a3b8', font: { size: 10 } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
         }
         
         // Inicializar
